@@ -23,7 +23,7 @@ export const WebsiteList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement>(null);
 
-  const categories = ['全部', '插画设计', 'UI 界面', '摄影大片', '3D 渲染', '平面海报'];
+  const categories = ['全部', 'UI 界面', '插画设计', '3D 渲染', '平面海报', '摄影大片', 'Image Gen', 'LLM', 'Search'];
   const scenes = ['全部', '活动页', '营销图', '弹窗', '插画'];
 
   useEffect(() => {
@@ -42,9 +42,10 @@ export const WebsiteList: React.FC = () => {
 
   const filteredWebsites = websites.filter(site => {
     const categoryMatch = activeCategory === '全部' || site.category === activeCategory;
+    const sceneMatch = activeScene === '全部' || (site.tags && site.tags.includes(activeScene));
     const searchMatch = site.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                         (site.description && site.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    return categoryMatch && searchMatch;
+    return categoryMatch && sceneMatch && searchMatch;
   });
 
   const visibleWebsites = filteredWebsites.slice(0, displayCount);

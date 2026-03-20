@@ -27,8 +27,8 @@ export const PromptList: React.FC<PromptListProps> = ({ onSelectPrompt }) => {
   const [isLoading, setIsLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement>(null);
 
-  const categories = ['全部', '插画设计', 'UI 界面', '摄影大片', '3D 渲染', '平面海报', '动漫风格'];
-  const styles = ['科技感', '极简主义', '赛博朋克', '写实', '超 surreal', '复古'];
+  const categories = ['全部', '插画设计', 'UI 界面', '摄影大片', '3D 渲染', '平面海报', 'Image Gen', 'LLM', 'Search'];
+  const styles = ['全部', '科技感', '极简主义', '赛博朋克', '写实', '超 surreal', '复古'];
 
   useEffect(() => {
     const fetchPrompts = async () => {
@@ -57,9 +57,10 @@ export const PromptList: React.FC<PromptListProps> = ({ onSelectPrompt }) => {
 
   const filteredPrompts = prompts.filter(prompt => {
     const categoryMatch = activeCategory === '全部' || prompt.category === activeCategory;
+    const styleMatch = activeStyle === '全部' || (prompt.tags && prompt.tags.includes(activeStyle));
     const searchMatch = prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                         (prompt.description && prompt.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    return categoryMatch && searchMatch;
+    return categoryMatch && styleMatch && searchMatch;
   });
 
   const visiblePrompts = filteredPrompts.slice(0, displayCount);

@@ -24,7 +24,7 @@ export const CaseStudyList: React.FC<CaseStudyListProps> = ({ onSelectCase }) =>
   const [isLoading, setIsLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement>(null);
 
-  const categories = ['所有项目', 'UI设计', '插画', '品牌', '动态图形', '神经网络艺术'];
+  const categories = ['所有项目', 'AIGC', 'UI设计', '插画', '品牌', '动态图形', '神经网络艺术'];
 
   useEffect(() => {
     const fetchCases = async () => {
