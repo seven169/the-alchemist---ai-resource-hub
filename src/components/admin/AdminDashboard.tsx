@@ -38,12 +38,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onExit }) => {
           <h2 className="text-2xl font-headline font-bold text-white text-center mb-6">管理员访问</h2>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <input 
-                type="password" 
-                value={password} 
-                onChange={e => setPassword(e.target.value)} 
-                placeholder="在此输入结界密码..." 
-                className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary-neon outline-none focus:ring-1 focus:ring-primary-neon transition-all" 
+              <input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="在此输入结界密码..."
+                className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary-neon outline-none focus:ring-1 focus:ring-primary-neon transition-all"
               />
               {error && <p className="text-red-400 text-xs mt-2 font-bold">{error}</p>}
             </div>
