@@ -24,7 +24,6 @@ export const PromptList: React.FC<PromptListProps> = ({ onSelectPrompt }) => {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [activeCategory, setActiveCategory] = useState('全部');
   const [activeStyle, setActiveStyle] = useState('全部');
-  const [sortBy, setSortBy] = useState('newest');
   const [displayCount, setDisplayCount] = useState(8);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -58,20 +57,13 @@ export const PromptList: React.FC<PromptListProps> = ({ onSelectPrompt }) => {
     fetchPrompts();
   }, []);
 
-  const filteredPrompts = prompts
-    .filter(prompt => {
-      const categoryMatch = activeCategory === '全部' || prompt.category === activeCategory;
-      const styleMatch = activeStyle === '全部' || (prompt.tags && prompt.tags.includes(activeStyle));
-      const searchMatch = prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          (prompt.description && prompt.description.toLowerCase().includes(searchQuery.toLowerCase()));
-      return categoryMatch && styleMatch && searchMatch;
-    })
-    .sort((a, b) => {
-      if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
-      if (sortBy === 'az') return a.title.localeCompare(b.title);
-      if (sortBy === 'za') return b.title.localeCompare(a.title);
-      return 0;
-    });
+  const filteredPrompts = prompts.filter(prompt => {
+    const categoryMatch = activeCategory === '全部' || prompt.category === activeCategory;
+    const styleMatch = activeStyle === '全部' || (prompt.tags && prompt.tags.includes(activeStyle));
+    const searchMatch = prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                        (prompt.description && prompt.description.toLowerCase().includes(searchQuery.toLowerCase()));
+    return categoryMatch && styleMatch && searchMatch;
+  });
 
   const visiblePrompts = filteredPrompts.slice(0, displayCount);
 
@@ -117,19 +109,6 @@ export const PromptList: React.FC<PromptListProps> = ({ onSelectPrompt }) => {
               placeholder="搜索资源..."
               className="w-full bg-card-dark border border-transparent rounded-full py-3 pl-12 pr-4 text-sm text-white focus:ring-1 focus:ring-primary-neon focus:border-primary-neon outline-none transition-all"
             />
-          </div>
-          <div className="relative shrink-0">
-            <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30 pointer-events-none" />
-            <select
-              value={sortBy}
-              onChange={e => { setSortBy(e.target.value); setDisplayCount(8); }}
-              className="appearance-none bg-card-dark border border-white/10 rounded-full py-3 pl-9 pr-4 text-xs text-white/60 focus:ring-1 focus:ring-primary-neon outline-none transition-all cursor-pointer hover:border-white/20"
-            >
-              <option value="newest">最新</option>
-              <option value="rating">评分最高</option>
-              <option value="az">A → Z</option>
-              <option value="za">Z → A</option>
-            </select>
           </div>
         </div>
       </div>
