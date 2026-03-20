@@ -21,7 +21,7 @@ interface PromptListProps {
 export const PromptList: React.FC<PromptListProps> = ({ onSelectPrompt }) => {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [activeCategory, setActiveCategory] = useState('全部');
-  const [activeStyle, setActiveStyle] = useState('科技感');
+  const [activeStyle, setActiveStyle] = useState('全部');
   const [displayCount, setDisplayCount] = useState(8);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
