@@ -128,13 +128,13 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onCl
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-2xl bg-card-dark rounded-[32px] border border-white/10 shadow-2xl overflow-hidden overflow-y-auto max-h-[90vh]"
+            className="relative w-full max-w-lg bg-card-dark rounded-2xl border border-white/10 shadow-2xl overflow-hidden overflow-y-auto max-h-[90vh]"
           >
-            <div className="p-8 md:p-12 space-y-10">
+            <div className="p-6 md:p-8 space-y-6">
               <div className="flex justify-between items-center">
                 <div>
-                  <h2 className="text-3xl font-headline font-bold text-white">录入新资源</h2>
-                  <p className="text-white/40 text-sm mt-1">贡献你的炼金发现，所有字段将同步至后台。</p>
+                  <h2 className="text-2xl font-headline font-bold text-white">录入新资源</h2>
+                  <p className="text-white/30 text-xs mt-1">贡献你的炼金发现，所有字段将同步至后台。</p>
                 </div>
                 <button 
                   onClick={onClose}
@@ -331,7 +331,7 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onCl
                   <button 
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full flex items-center justify-center gap-3 py-5 rounded-2xl bg-gradient-to-br from-white to-primary-neon text-bg-dark font-headline font-bold text-lg shadow-xl shadow-primary-neon/20 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-bg-dark border border-primary-neon/40 text-primary-neon font-headline font-bold text-sm tracking-widest shadow-lg shadow-primary-neon/10 hover:bg-primary-neon/10 hover:border-primary-neon active:scale-[0.99] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     <Save className="w-5 h-5" />
                     {isSubmitting ? '正在提交...' : '确认同步入库'}
