@@ -4,12 +4,13 @@ import {
   Link as LinkIcon, 
   Terminal, 
   LayoutGrid,
-  ChevronDown
+  ChevronDown,
+  Save
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'motion/react';
 import { supabase } from '../lib/supabase';
-import { ImageUploader } from './admin/ImageUploader'; // Reuse the new uploader
+import { ImageUploader } from './admin/ImageUploader';
 
 interface AddResourceModalProps {
   isOpen: boolean;
@@ -19,39 +20,95 @@ interface AddResourceModalProps {
 export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onClose }) => {
   const [type, setType] = useState<'website' | 'prompt' | 'case'>('website');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
+  
+  // Dynamic form state based on all possible fields across the 3 types
+  const [formData, setFormData] = useState<any>({
     title: '',
+    description: '',
     category: 'UI 界面',
     tags: '',
     image: '',
-    url: ''
+    url: '',
+    // Prompt specific
+    positive: '',
+    negative: '',
+    model: '',
+    sampler: '',
+    steps: 20,
+    cfg: 7.0,
+    seed: '',
+    size: '1024x1024',
+    // Case specific
+    status: 'Completed'
   });
+
+  const resetForm = (newType?: 'website' | 'prompt' | 'case') => {
+    const activeType = newType || type;
+    setFormData({
+      title: '',
+      description: '',
+      category: activeType === 'website' ? 'UI 界面' : (activeType === 'prompt' ? 'Image Gen' : 'AIGC'),
+      tags: '',
+      image: '',
+      url: '',
+      positive: '',
+      negative: '',
+      model: '',
+      sampler: '',
+      steps: 20,
+      cfg: 7.0,
+      seed: '',
+      size: '1024x1024',
+      status: 'Completed'
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title) return toast.error('请填写资源名称');
+    if (!formData.title) return toast.error('请填写资源标题');
 
     setIsSubmitting(true);
-    const payload: any = {
+    
+    // Prepare payload based on type to match table structure
+    let payload: any = {
       id: `${type}-${Date.now()}`,
       title: formData.title,
+      description: formData.description,
       category: formData.category,
-      tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
+      tags: formData.tags.split(',').map((t: string) => t.trim()).filter(Boolean),
       image: formData.image,
     };
 
-    if (type === 'website') payload.url = formData.url;
-    if (type === 'case') payload.status = 'Completed';
+    if (type === 'website') {
+      payload.url = formData.url;
+    } else if (type === 'prompt') {
+      payload = {
+        ...payload,
+        positive: formData.positive,
+        negative: formData.negative,
+        model: formData.model,
+        sampler: formData.sampler,
+        steps: formData.steps,
+        cfg: formData.cfg,
+        seed: formData.seed,
+        size: formData.size,
+        rating: 5.0
+      };
+    } else if (type === 'case') {
+      payload.status = formData.status;
+    }
 
-    const { error } = await supabase.from(`${type}s`).insert([payload]);
-
-    setIsSubmitting(false);
-
-    if (error) {
-      toast.error('提交失败: ' + error.message);
-    } else {
+    try {
+      const { error } = await supabase.from(`${type}s`).insert([payload]);
+      if (error) throw error;
+      
       toast.success('资源已成功入库！');
+      resetForm();
       onClose();
+    } catch (error: any) {
+      toast.error('提交失败: ' + error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -77,7 +134,7 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onCl
               <div className="flex justify-between items-center">
                 <div>
                   <h2 className="text-3xl font-headline font-bold text-white">录入新资源</h2>
-                  <p className="text-white/40 text-sm mt-1">贡献你的炼金发现，资源将直接写入系统。</p>
+                  <p className="text-white/40 text-sm mt-1">贡献你的炼金发现，所有字段将同步至后台。</p>
                 </div>
                 <button 
                   onClick={onClose}
@@ -98,8 +155,7 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onCl
                     type="button"
                     onClick={() => {
                       setType(item.id as any);
-                      // Reset some form data when switching types
-                      setFormData(prev => ({ ...prev, url: '' }));
+                      resetForm(item.id as any);
                     }}
                     className={`relative flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-headline font-bold transition-all z-10 ${
                       type === item.id 
@@ -121,49 +177,61 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onCl
               </div>
 
               <form className="space-y-6" onSubmit={handleSubmit}>
+                {/* Common Fields */}
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">标题 Title *</label>
+                    <input 
+                      type="text" 
+                      value={formData.title}
+                      onChange={e => setFormData({...formData, title: e.target.value})}
+                      placeholder="录入标题..."
+                      className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white focus:ring-1 focus:ring-primary-neon/30 transition-all outline-none"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">分类 Category</label>
+                    {type === 'website' ? (
+                      <div className="relative">
+                        <select 
+                          value={formData.category}
+                          onChange={e => setFormData({...formData, category: e.target.value})}
+                          className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white appearance-none focus:ring-1 focus:ring-primary-neon/30 outline-none"
+                        >
+                          <option>UI 界面</option>
+                          <option>插画设计</option>
+                          <option>3D 渲染</option>
+                          <option>平面海报</option>
+                          <option>摄影大片</option>
+                          <option>Image Gen</option>
+                          <option>LLM</option>
+                          <option>Search</option>
+                        </select>
+                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 pointer-events-none" />
+                      </div>
+                    ) : (
+                      <input 
+                        type="text" 
+                        value={formData.category}
+                        onChange={e => setFormData({...formData, category: e.target.value})}
+                        className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white focus:ring-1 focus:ring-primary-neon/30 transition-all outline-none"
+                      />
+                    )}
+                  </div>
+                </div>
+
                 <div className="space-y-2">
-                  <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">资源名称 Title</label>
-                  <input 
-                    type="text" 
-                    value={formData.title}
-                    onChange={e => setFormData({...formData, title: e.target.value})}
-                    placeholder="例如: Midjourney v6 摄影提示词"
-                    className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white focus:ring-1 focus:ring-primary-neon/30 transition-all outline-none"
-                    required
+                  <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">描述 Description</label>
+                  <textarea 
+                    value={formData.description}
+                    onChange={e => setFormData({...formData, description: e.target.value})}
+                    placeholder="简短描述..."
+                    className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white focus:ring-1 focus:ring-primary-neon/30 transition-all h-20 outline-none resize-none"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">分类 Category</label>
-                    <div className="relative">
-                      <select 
-                        value={formData.category}
-                        onChange={e => setFormData({...formData, category: e.target.value})}
-                        className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white appearance-none focus:ring-1 focus:ring-primary-neon/30 outline-none"
-                      >
-                        <option>UI 界面</option>
-                        <option>插画设计</option>
-                        <option>3D 渲染</option>
-                        <option>Image Gen</option>
-                        <option>LLM</option>
-                        <option>AIGC</option>
-                      </select>
-                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 pointer-events-none" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">标签 Tags</label>
-                    <input 
-                      type="text" 
-                      value={formData.tags}
-                      onChange={e => setFormData({...formData, tags: e.target.value})}
-                      placeholder="用逗号分隔"
-                      className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white focus:ring-1 focus:ring-primary-neon/30 transition-all outline-none"
-                    />
-                  </div>
-                </div>
-
+                {/* Type Specific Fields */}
                 {type === 'website' && (
                   <div className="space-y-2">
                     <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">网址链接 URL</label>
@@ -173,18 +241,89 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onCl
                       onChange={e => setFormData({...formData, url: e.target.value})}
                       placeholder="https://"
                       className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white focus:ring-1 focus:ring-primary-neon/30 transition-all outline-none"
-                      required={type === 'website'}
+                      required
                     />
                   </div>
                 )}
 
+                {type === 'prompt' && (
+                  <>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">正向提示词 Positive *</label>
+                      <textarea 
+                        required
+                        value={formData.positive}
+                        onChange={e => setFormData({...formData, positive: e.target.value})}
+                        className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white focus:ring-1 focus:ring-primary-neon/30 transition-all h-24 outline-none resize-none"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">反向提示词 Negative</label>
+                      <textarea 
+                        value={formData.negative}
+                        onChange={e => setFormData({...formData, negative: e.target.value})}
+                        className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white focus:ring-1 focus:ring-primary-neon/30 transition-all h-16 outline-none resize-none"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-white/20">模型 Model</label>
+                        <input type="text" value={formData.model} onChange={e => setFormData({...formData, model: e.target.value})} className="w-full bg-bg-dark border border-white/5 rounded-lg p-3 text-white focus:ring-1 focus:ring-primary-neon/30 text-xs" />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-white/20">采样 Sampler</label>
+                        <input type="text" value={formData.sampler} onChange={e => setFormData({...formData, sampler: e.target.value})} className="w-full bg-bg-dark border border-white/5 rounded-lg p-3 text-white focus:ring-1 focus:ring-primary-neon/30 text-xs" />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-white/20">步数 Steps</label>
+                        <input type="number" value={formData.steps} onChange={e => setFormData({...formData, steps: Number(e.target.value)})} className="w-full bg-bg-dark border border-white/5 rounded-lg p-3 text-white focus:ring-1 focus:ring-primary-neon/30 text-xs" />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-white/20">CFG</label>
+                        <input type="number" step="0.1" value={formData.cfg} onChange={e => setFormData({...formData, cfg: Number(e.target.value)})} className="w-full bg-bg-dark border border-white/5 rounded-lg p-3 text-white focus:ring-1 focus:ring-primary-neon/30 text-xs" />
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {type === 'case' && (
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">实验状态 Status</label>
+                    <div className="relative">
+                      <select 
+                        value={formData.status}
+                        onChange={e => setFormData({...formData, status: e.target.value})}
+                        className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white appearance-none focus:ring-1 focus:ring-primary-neon/30 outline-none"
+                      >
+                        <option value="Completed">Completed (已完成)</option>
+                        <option value="In Progress">In Progress (进行中)</option>
+                        <option value="Draft">Draft (草稿)</option>
+                      </select>
+                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 pointer-events-none" />
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-2">
-                  <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">封面图片 Cover Image</label>
-                  <div className="p-4 rounded-xl border border-white/5 bg-bg-dark/50">
-                    <ImageUploader 
-                      value={formData.image} 
-                      onChange={url => setFormData({...formData, image: url})} 
-                    />
+                  <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">标签与封面 Tags & Image</label>
+                  <div className="p-6 rounded-2xl border border-white/5 bg-bg-dark/50 space-y-6">
+                    <div>
+                      <label className="block text-[10px] text-white/20 mb-2">标签 (逗号分隔)</label>
+                      <input 
+                        type="text" 
+                        value={formData.tags}
+                        onChange={e => setFormData({...formData, tags: e.target.value})}
+                        placeholder="例如: 简约, 极客, 灵感"
+                        className="w-full bg-bg-dark/50 border border-white/5 rounded-lg p-3 text-white focus:ring-1 focus:ring-primary-neon/30 outline-none text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-white/20 mb-2">封面图片</label>
+                      <ImageUploader 
+                        value={formData.image} 
+                        onChange={url => setFormData({...formData, image: url})} 
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -192,9 +331,10 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onCl
                   <button 
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full flex items-center justify-center py-5 rounded-2xl bg-gradient-to-br from-white to-primary-neon text-bg-dark font-headline font-bold text-lg shadow-xl shadow-primary-neon/20 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full flex items-center justify-center gap-3 py-5 rounded-2xl bg-gradient-to-br from-white to-primary-neon text-bg-dark font-headline font-bold text-lg shadow-xl shadow-primary-neon/20 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isSubmitting ? '正在提交...' : '确认入库'}
+                    <Save className="w-5 h-5" />
+                    {isSubmitting ? '正在提交...' : '确认同步入库'}
                   </button>
                 </div>
               </form>
