@@ -128,7 +128,7 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onCl
             initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.97 }}
-            className="relative w-full max-w-lg bg-card-dark rounded-2xl border border-white/10 shadow-2xl overflow-hidden overflow-y-auto max-h-[90vh]"
+            className="relative w-full max-w-lg bg-card-dark rounded-2xl border border-white/10 shadow-2xl overflow-hidden overflow-y-auto max-h-[90vh] no-scrollbar"
           >
             <div className="p-6 md:p-8 space-y-6">
               <div className="flex justify-between items-center">
