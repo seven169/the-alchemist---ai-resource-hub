@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { Page, CaseStudy } from '../types';
 import { supabase } from '../lib/supabase';
 import { motion } from 'motion/react';
+import { EmptyState } from './EmptyState';
 
 interface CaseStudyListProps {
   onSelectCase: (caseStudy: CaseStudy) => void;
@@ -124,6 +125,15 @@ export const CaseStudyList: React.FC<CaseStudyListProps> = ({ onSelectCase }) =>
           </div>
         </div>
       </div>
+
+      {/* Empty State */}
+      {!isLoading && filteredCases.length === 0 && (
+        <EmptyState
+          title="实验室记录为空"
+          description="该分类下暂无案例实验，可以尝试重置筛选，或通过后台录入新的案例。"
+          onReset={() => { setActiveCategory('所有项目'); setSearchQuery(''); }}
+        />
+      )}
 
       <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
         {visibleCases.map((item, idx) => (

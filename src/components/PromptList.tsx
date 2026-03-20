@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { Page, Prompt } from '../types';
 import { supabase } from '../lib/supabase';
 import { motion } from 'motion/react';
+import { EmptyState } from './EmptyState';
 
 interface PromptListProps {
   onSelectPrompt: (prompt: Prompt) => void;
@@ -160,6 +161,15 @@ export const PromptList: React.FC<PromptListProps> = ({ onSelectPrompt }) => {
           </div>
         </div>
       </div>
+
+      {/* Empty State */}
+      {!isLoading && filteredPrompts.length === 0 && (
+        <EmptyState
+          title="未找到炼金配方"
+          description="该分类或风格下暂无 Prompt，尝试重置筛选器或换个方向探索吧。"
+          onReset={() => { setActiveCategory('全部'); setActiveStyle('全部'); setSearchQuery(''); }}
+        />
+      )}
 
       <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
         {visiblePrompts.map((prompt, idx) => (

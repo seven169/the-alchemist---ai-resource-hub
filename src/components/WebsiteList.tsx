@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { Resource } from '../types';
 import { supabase } from '../lib/supabase';
 import { motion } from 'motion/react';
+import { EmptyState } from './EmptyState';
 
 export const WebsiteList: React.FC = () => {
   const [websites, setWebsites] = useState<Resource[]>([]);
@@ -149,6 +150,15 @@ export const WebsiteList: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Empty State */}
+      {!isLoading && filteredWebsites.length === 0 && (
+        <EmptyState
+          title="炼金坩埚空了"
+          description="当前分类或搜索词下没有匹配的网站资源，换个方向继续探索吧。"
+          onReset={() => { setActiveCategory('全部'); setActiveScene('全部'); setSearchQuery(''); }}
+        />
+      )}
 
       {/* Waterfall Grid */}
       <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
