@@ -66,7 +66,7 @@ export const AdminWebsites: React.FC = () => {
 
     if (editingId) {
       const { error } = await supabase.from('websites').update(payload).eq('id', editingId);
-      if (error) return toast.error('更名失败: ' + error.message);
+      if (error) return toast.error('更新失败: ' + error.message);
       toast.success('更新成功');
     } else {
       const { error } = await supabase.from('websites').insert([payload]);
