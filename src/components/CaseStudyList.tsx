@@ -5,7 +5,8 @@ import {
   Plus,
   ChevronRight,
   Sparkles,
-  Loader2
+  Loader2,
+  ArrowUpDown
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Page, CaseStudy } from '../types';
@@ -20,6 +21,7 @@ interface CaseStudyListProps {
 export const CaseStudyList: React.FC<CaseStudyListProps> = ({ onSelectCase }) => {
   const [cases, setCases] = useState<CaseStudy[]>([]);
   const [activeCategory, setActiveCategory] = useState('所有项目');
+  const [sortBy, setSortBy] = useState('newest');
   const [displayCount, setDisplayCount] = useState(4);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -44,12 +46,19 @@ export const CaseStudyList: React.FC<CaseStudyListProps> = ({ onSelectCase }) =>
     fetchCases();
   }, []);
 
-  const filteredCases = cases.filter(item => {
-    const categoryMatch = activeCategory === '所有项目' || item.category === activeCategory;
-    const searchMatch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                        (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    return categoryMatch && searchMatch;
-  });
+  const filteredCases = cases
+    .filter(item => {
+      const categoryMatch = activeCategory === '所有项目' || item.category === activeCategory;
+      const searchMatch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
+      return categoryMatch && searchMatch;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'az') return a.title.localeCompare(b.title);
+      if (sortBy === 'za') return b.title.localeCompare(a.title);
+      if (sortBy === 'status') return (a.status || '').localeCompare(b.status || '');
+      return 0;
+    });
 
   const visibleCases = filteredCases.slice(0, displayCount);
 
@@ -83,18 +92,33 @@ export const CaseStudyList: React.FC<CaseStudyListProps> = ({ onSelectCase }) =>
       <div className="pb-6 space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <h2 className="text-3xl font-headline font-bold text-white">探索 案例</h2>
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-            <input 
-              type="text" 
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setDisplayCount(4);
-              }}
-              placeholder="搜索实验..."
-              className="w-full bg-card-dark border border-transparent rounded-full py-3 pl-12 pr-4 text-sm text-white focus:ring-1 focus:ring-primary-neon focus:border-primary-neon outline-none transition-all"
-            />
+          <div className="flex items-center gap-3">
+            <div className="relative w-full md:w-64">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+              <input 
+                type="text" 
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setDisplayCount(4);
+                }}
+                placeholder="搜索实验..."
+                className="w-full bg-card-dark border border-transparent rounded-full py-3 pl-12 pr-4 text-sm text-white focus:ring-1 focus:ring-primary-neon focus:border-primary-neon outline-none transition-all"
+              />
+            </div>
+            <div className="relative shrink-0">
+              <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30 pointer-events-none" />
+              <select
+                value={sortBy}
+                onChange={e => { setSortBy(e.target.value); setDisplayCount(4); }}
+                className="appearance-none bg-card-dark border border-white/10 rounded-full py-3 pl-9 pr-4 text-xs text-white/60 focus:ring-1 focus:ring-primary-neon outline-none transition-all cursor-pointer hover:border-white/20"
+              >
+                <option value="newest">最新</option>
+                <option value="status">按状态</option>
+                <option value="az">A → Z</option>
+                <option value="za">Z → A</option>
+              </select>
+            </div>
           </div>
         </div>
 

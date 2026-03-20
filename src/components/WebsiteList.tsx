@@ -7,7 +7,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Plus,
-  Loader2
+  Loader2,
+  ArrowUpDown
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Resource } from '../types';
@@ -19,6 +20,7 @@ export const WebsiteList: React.FC = () => {
   const [websites, setWebsites] = useState<Resource[]>([]);
   const [activeCategory, setActiveCategory] = useState('全部');
   const [activeScene, setActiveScene] = useState('全部');
+  const [sortBy, setSortBy] = useState('newest');
   const [displayCount, setDisplayCount] = useState(6);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -41,13 +43,20 @@ export const WebsiteList: React.FC = () => {
     fetchWebsites();
   }, []);
 
-  const filteredWebsites = websites.filter(site => {
-    const categoryMatch = activeCategory === '全部' || site.category === activeCategory;
-    const sceneMatch = activeScene === '全部' || (site.tags && site.tags.includes(activeScene));
-    const searchMatch = site.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                        (site.description && site.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    return categoryMatch && sceneMatch && searchMatch;
-  });
+  const filteredWebsites = websites
+    .filter(site => {
+      const categoryMatch = activeCategory === '全部' || site.category === activeCategory;
+      const sceneMatch = activeScene === '全部' || (site.tags && site.tags.includes(activeScene));
+      const searchMatch = site.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          (site.description && site.description.toLowerCase().includes(searchQuery.toLowerCase()));
+      return categoryMatch && sceneMatch && searchMatch;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'az') return a.title.localeCompare(b.title);
+      if (sortBy === 'za') return b.title.localeCompare(a.title);
+      // newest: rely on id/created_at desc order from fetch
+      return 0;
+    });
 
   const visibleWebsites = filteredWebsites.slice(0, displayCount);
 
@@ -83,18 +92,32 @@ export const WebsiteList: React.FC = () => {
       <div className="pb-6 space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <h2 className="text-3xl font-headline font-bold text-white">探索 网站</h2>
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-            <input 
-              type="text" 
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setDisplayCount(6);
-              }}
-              placeholder="搜索资源..."
-              className="w-full bg-card-dark border border-transparent rounded-full py-3 pl-12 pr-4 text-sm text-white focus:ring-1 focus:ring-primary-neon focus:border-primary-neon outline-none transition-all"
-            />
+          <div className="flex items-center gap-3">
+            <div className="relative w-full md:w-64">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+              <input 
+                type="text" 
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setDisplayCount(6);
+                }}
+                placeholder="搜索资源..."
+                className="w-full bg-card-dark border border-transparent rounded-full py-3 pl-12 pr-4 text-sm text-white focus:ring-1 focus:ring-primary-neon focus:border-primary-neon outline-none transition-all"
+              />
+            </div>
+            <div className="relative shrink-0">
+              <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30 pointer-events-none" />
+              <select
+                value={sortBy}
+                onChange={e => { setSortBy(e.target.value); setDisplayCount(6); }}
+                className="appearance-none bg-card-dark border border-white/10 rounded-full py-3 pl-9 pr-4 text-xs text-white/60 focus:ring-1 focus:ring-primary-neon outline-none transition-all cursor-pointer hover:border-white/20"
+              >
+                <option value="newest">最新</option>
+                <option value="az">A → Z</option>
+                <option value="za">Z → A</option>
+              </select>
+            </div>
           </div>
         </div>
 
