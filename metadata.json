@@ -1,0 +1,8 @@
+{
+  "name": "The Alchemist - AI Resource Hub",
+  "description": "A premium AI resource hub for prompts, websites, and case studies with integrated AI generation tools.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
