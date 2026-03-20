@@ -36,7 +36,7 @@ export const PromptList: React.FC<PromptListProps> = ({ onSelectPrompt }) => {
   useEffect(() => {
     const fetchPrompts = async () => {
       setIsLoading(true);
-      const { data, error } = await supabase.from('prompts').select('*');
+      const { data, error } = await supabase.from('prompts').select('*').order('sort_order', { ascending: true });
       if (error) {
         toast.error('获取提示词失败: ' + error.message);
       } else if (data) {

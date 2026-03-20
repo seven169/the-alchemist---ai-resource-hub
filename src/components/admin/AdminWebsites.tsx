@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Resource } from '../../types';
-import { Trash2, Edit, Plus, X, Save, RefreshCw } from 'lucide-react';
+import { Trash2, Edit, Plus, X, Save, RefreshCw, ArrowUp, ArrowDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 
@@ -18,7 +18,7 @@ export const AdminWebsites: React.FC = () => {
 
   const fetchWebsites = async () => {
     setIsLoading(true);
-    const { data, error } = await supabase.from('websites').select('*').order('created_at', { ascending: false });
+    const { data, error } = await supabase.from('websites').select('*').order('sort_order', { ascending: true });
     if (error) toast.error('获取失败: ' + error.message);
     else if (data) setWebsites(data);
     setIsLoading(false);
@@ -81,10 +81,26 @@ export const AdminWebsites: React.FC = () => {
     if (!window.confirm('确定要删除吗？该操作不可恢复。')) return;
     const { error } = await supabase.from('websites').delete().eq('id', id);
     if (error) toast.error('删除失败: ' + error.message);
-    else {
-      toast.success('删除成功');
-      setWebsites(websites.filter(w => w.id !== id));
-    }
+    else { toast.success('删除成功'); setWebsites(websites.filter(w => w.id !== id)); }
+  };
+
+  const handleMove = async (index: number, direction: 'up' | 'down') => {
+    const newList = [...websites];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= newList.length) return;
+
+    // Swap sort_order values
+    const currentOrder = (newList[index] as any).sort_order ?? index;
+    const targetOrder = (newList[targetIndex] as any).sort_order ?? targetIndex;
+
+    const [errA, errB] = await Promise.all([
+      supabase.from('websites').update({ sort_order: targetOrder }).eq('id', newList[index].id).then(r => r.error),
+      supabase.from('websites').update({ sort_order: currentOrder }).eq('id', newList[targetIndex].id).then(r => r.error),
+    ]);
+
+    if (errA || errB) return toast.error('排序失败');
+    toast.success('顺序已更新');
+    fetchWebsites();
   };
 
   return (
@@ -112,7 +128,7 @@ export const AdminWebsites: React.FC = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {websites.map(site => (
+            {websites.map((site, idx) => (
               <tr key={site.id} className="hover:bg-white/5 transition-colors">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
@@ -128,7 +144,9 @@ export const AdminWebsites: React.FC = () => {
                   {site.url ? <a href={site.url} target="_blank" rel="noreferrer" className="text-primary-neon hover:underline truncate max-w-[150px] inline-block">{site.url}</a> : '无'}
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <div className="flex items-center justify-end gap-2">
+                  <div className="flex items-center justify-end gap-1">
+                    <button onClick={() => handleMove(idx, 'up')} disabled={idx === 0} className="p-1.5 text-white/20 hover:text-white disabled:opacity-20 bg-white/5 hover:bg-white/10 rounded transition-colors"><ArrowUp className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => handleMove(idx, 'down')} disabled={idx === websites.length - 1} className="p-1.5 text-white/20 hover:text-white disabled:opacity-20 bg-white/5 hover:bg-white/10 rounded transition-colors"><ArrowDown className="w-3.5 h-3.5" /></button>
                     <button onClick={() => openForm(site)} className="p-1.5 text-white/40 hover:text-white bg-white/5 hover:bg-white/10 rounded transition-colors"><Edit className="w-4 h-4" /></button>
                     <button onClick={() => handleDelete(site.id)} className="p-1.5 text-white/40 hover:text-red-400 bg-white/5 hover:bg-red-400/20 rounded transition-colors"><Trash2 className="w-4 h-4" /></button>
                   </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Prompt } from '../../types';
-import { Trash2, Edit, Plus, X, Save, RefreshCw } from 'lucide-react';
+import { Trash2, Edit, Plus, X, Save, RefreshCw, ArrowUp, ArrowDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 
@@ -18,7 +18,7 @@ export const AdminPrompts: React.FC = () => {
 
   const fetchPrompts = async () => {
     setIsLoading(true);
-    const { data, error } = await supabase.from('prompts').select('*').order('created_at', { ascending: false });
+    const { data, error } = await supabase.from('prompts').select('*').order('sort_order', { ascending: true });
     if (error) toast.error('获取失败: ' + error.message);
     else if (data) {
       const mapped = data.map((p: any) => ({
@@ -82,6 +82,21 @@ export const AdminPrompts: React.FC = () => {
     else { toast.success('删除成功'); setPrompts(prompts.filter(w => w.id !== id)); }
   };
 
+  const handleMove = async (index: number, direction: 'up' | 'down') => {
+    const newList = [...prompts];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= newList.length) return;
+    const currentOrder = (newList[index] as any).sort_order ?? index;
+    const targetOrder = (newList[targetIndex] as any).sort_order ?? targetIndex;
+    const [errA, errB] = await Promise.all([
+      supabase.from('prompts').update({ sort_order: targetOrder }).eq('id', newList[index].id).then(r => r.error),
+      supabase.from('prompts').update({ sort_order: currentOrder }).eq('id', newList[targetIndex].id).then(r => r.error),
+    ]);
+    if (errA || errB) return toast.error('排序失败');
+    toast.success('顺序已更新');
+    fetchPrompts();
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -107,7 +122,7 @@ export const AdminPrompts: React.FC = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {prompts.map(prompt => (
+            {prompts.map((prompt, idx) => (
               <tr key={prompt.id} className="hover:bg-white/5 transition-colors">
                 <td className="px-4 py-3">
                   <p className="font-bold text-white truncate max-w-[150px]">{prompt.title}</p>
@@ -116,7 +131,9 @@ export const AdminPrompts: React.FC = () => {
                 <td className="px-4 py-3"><p className="text-xs truncate max-w-[200px] text-white/50">{prompt.positive}</p></td>
                 <td className="px-4 py-3"><span className="px-2 py-1 bg-white/5 rounded text-xs">{prompt.params.model}</span></td>
                 <td className="px-4 py-3 text-right">
-                  <div className="flex items-center justify-end gap-2">
+                  <div className="flex items-center justify-end gap-1">
+                    <button onClick={() => handleMove(idx, 'up')} disabled={idx === 0} className="p-1.5 text-white/20 hover:text-white disabled:opacity-20 bg-white/5 hover:bg-white/10 rounded transition-colors"><ArrowUp className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => handleMove(idx, 'down')} disabled={idx === prompts.length - 1} className="p-1.5 text-white/20 hover:text-white disabled:opacity-20 bg-white/5 hover:bg-white/10 rounded transition-colors"><ArrowDown className="w-3.5 h-3.5" /></button>
                     <button onClick={() => openForm(prompt)} className="p-1.5 text-white/40 hover:text-white bg-white/5 hover:bg-white/10 rounded transition-colors"><Edit className="w-4 h-4" /></button>
                     <button onClick={() => handleDelete(prompt.id)} className="p-1.5 text-white/40 hover:text-red-400 bg-white/5 hover:bg-red-400/20 rounded transition-colors"><Trash2 className="w-4 h-4" /></button>
                   </div>

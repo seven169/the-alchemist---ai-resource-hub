@@ -32,7 +32,7 @@ export const WebsiteList: React.FC = () => {
   useEffect(() => {
     const fetchWebsites = async () => {
       setIsLoading(true);
-      const { data, error } = await supabase.from('websites').select('*');
+      const { data, error } = await supabase.from('websites').select('*').order('sort_order', { ascending: true });
       if (error) {
         toast.error('获取网站失败: ' + error.message);
       } else if (data) {

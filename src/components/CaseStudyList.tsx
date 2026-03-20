@@ -35,7 +35,7 @@ export const CaseStudyList: React.FC<CaseStudyListProps> = ({ onSelectCase }) =>
       const { data, error } = await supabase.from('cases').select(`
         *,
         logs:cases_logs(*)
-      `);
+      `).order('sort_order', { ascending: true });
       if (error) {
         toast.error('获取案例失败: ' + error.message);
       } else if (data) {
