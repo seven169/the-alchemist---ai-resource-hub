@@ -83,7 +83,7 @@ export const WebsiteList: React.FC = () => {
       {/* Filters */}
       <div className="pb-6 space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <h2 className="text-3xl font-headline font-bold text-white">探索 网站</h2>
+          <h2 className="text-2xl md:text-3xl font-headline font-bold text-white">探索 网站</h2>
           <div className="flex items-center gap-3">
             <div className="relative w-full md:w-64">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
@@ -102,9 +102,9 @@ export const WebsiteList: React.FC = () => {
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 overflow-x-auto no-scrollbar">
             <span className="text-[10px] font-headline uppercase tracking-[0.2em] text-primary-neon w-20 shrink-0">分类 Type:</span>
-            <div className="flex flex-wrap gap-2 p-1 bg-white/5 rounded-full w-fit">
+            <div className="flex flex-nowrap gap-2 p-1 bg-white/5 rounded-full w-fit">
               {categories.map(cat => (
                 <button 
                   key={cat} 
@@ -128,9 +128,9 @@ export const WebsiteList: React.FC = () => {
               ))}
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 overflow-x-auto no-scrollbar">
             <span className="text-[10px] font-headline uppercase tracking-[0.2em] text-primary-neon w-20 shrink-0">场景 Scene:</span>
-            <div className="flex flex-wrap gap-2 p-1 bg-white/5 rounded-full w-fit">
+            <div className="flex flex-nowrap gap-2 p-1 bg-white/5 rounded-full w-fit">
               {scenes.map(s => (
                 <button 
                   key={s} 
@@ -164,18 +164,18 @@ export const WebsiteList: React.FC = () => {
       )}
 
       {/* Waterfall Grid */}
-      <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {visibleWebsites.map((site, idx) => (
           <motion.div
             key={site.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: (idx % 6) * 0.1 }}
-            className="break-inside-avoid group bg-card-dark rounded-2xl overflow-hidden hover:bg-card-high transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary-neon/5 border border-white/5 mb-8"
+            className="group bg-card-dark rounded-2xl overflow-hidden hover:bg-card-high transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary-neon/5 border border-white/5 mb-8"
           >
             <div className="relative h-48 overflow-hidden">
-              <img 
-                src={site.image} 
+              <img
+                src={site.image}
                 alt={site.title}
                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-110 group-hover:scale-100"
               />

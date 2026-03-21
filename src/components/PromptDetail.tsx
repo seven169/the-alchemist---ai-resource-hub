@@ -75,8 +75,8 @@ export const PromptDetail: React.FC<PromptDetailProps> = ({ prompt, onBack }) =>
               <span className="px-3 py-1 rounded-full bg-primary-neon/10 text-primary-neon font-headline text-[10px] font-bold uppercase tracking-widest">{prompt.category}</span>
               <span className="text-white/20 text-xs font-headline">ID: {prompt.id}</span>
             </div>
-            <h1 className="text-5xl font-headline font-bold text-white leading-tight">{prompt.title}</h1>
-            <p className="mt-4 text-white/40 text-lg font-light leading-relaxed">{prompt.description}</p>
+            <h1 className="text-3xl md:text-5xl font-headline font-bold text-white leading-tight">{prompt.title}</h1>
+            <p className="mt-4 text-white/40 text-sm md:text-lg font-light leading-relaxed">{prompt.description}</p>
           </div>
 
           <div className="space-y-6">

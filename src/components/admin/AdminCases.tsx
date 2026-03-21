@@ -154,7 +154,7 @@ export const AdminCases: React.FC = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-bg-dark/80 backdrop-blur-sm">
-          <div className="w-full max-w-xl bg-card-dark rounded-2xl border border-white/10 p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+          <div className="w-full max-w-xl bg-card-dark rounded-2xl border border-white/10 p-6 shadow-2xl overflow-y-auto max-h-[90vh] no-scrollbar">
             <div className="flex justify-between items-center border-b border-white/10 pb-4 mb-6">
               <h3 className="text-xl font-headline font-bold text-white">{editingId ? '编辑案例实验' : '新增案例实验'}</h3>
               <button onClick={() => setIsModalOpen(false)} className="text-white/40 hover:text-white"><X className="w-6 h-6" /></button>

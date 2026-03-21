@@ -133,8 +133,8 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onCl
             <div className="p-6 md:p-8 space-y-6">
               <div className="flex justify-between items-center">
                 <div>
-                  <h2 className="text-2xl font-headline font-bold text-white">录入新资源</h2>
-                  <p className="text-white/30 text-xs mt-1">贡献你的炼金发现，所有字段将同步至后台。</p>
+                  <h2 className="text-xl md:text-2xl font-headline font-bold text-white">录入新资源</h2>
+                  <p className="text-white/30 text-[10px] md:text-xs mt-1">贡献你的炼金发现，所有字段将同步至后台。</p>
                 </div>
                 <button 
                   onClick={onClose}

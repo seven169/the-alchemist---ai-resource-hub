@@ -83,7 +83,9 @@ export const CaseStudyList: React.FC<CaseStudyListProps> = ({ onSelectCase }) =>
     <div className="py-12 space-y-8">
       <div className="pb-6 space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <h2 className="text-3xl font-headline font-bold text-white">探索 案例</h2>
+          <h2 className="text-2xl md:text-3xl font-headline font-bold text-white flex items-center gap-2">
+            案例 实验
+          </h2>
           <div className="flex items-center gap-3">
             <div className="relative w-full md:w-64">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
@@ -101,7 +103,7 @@ export const CaseStudyList: React.FC<CaseStudyListProps> = ({ onSelectCase }) =>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 overflow-x-auto no-scrollbar flex-nowrap">
           <span className="text-[10px] font-headline uppercase tracking-[0.2em] text-primary-neon w-20 shrink-0">筛选 Filter:</span>
           <div className="flex flex-wrap gap-2 p-1 bg-white/5 rounded-full w-fit">
             {categories.map(cat => (
@@ -138,7 +140,7 @@ export const CaseStudyList: React.FC<CaseStudyListProps> = ({ onSelectCase }) =>
         />
       )}
 
-      <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {visibleCases.map((item, idx) => (
           <motion.article 
             key={item.id}
@@ -146,7 +148,7 @@ export const CaseStudyList: React.FC<CaseStudyListProps> = ({ onSelectCase }) =>
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: (idx % 4) * 0.1 }}
             onClick={() => onSelectCase(item)}
-            className="break-inside-avoid group overflow-hidden rounded-2xl bg-card-dark transition-all hover:translate-y-[-4px] hover:shadow-2xl hover:shadow-primary-neon/5 border border-white/5 cursor-pointer mb-8"
+            className="group overflow-hidden rounded-2xl bg-card-dark transition-all hover:translate-y-[-4px] hover:shadow-2xl hover:shadow-primary-neon/5 border border-white/5 cursor-pointer"
           >
             <div className="relative overflow-hidden">
               <img 
@@ -163,7 +165,9 @@ export const CaseStudyList: React.FC<CaseStudyListProps> = ({ onSelectCase }) =>
             </div>
             <div className="p-8">
               <span className="text-white/40 font-headline text-[10px] tracking-widest uppercase mb-3 block">{item.category}</span>
-              <h3 className="text-2xl font-headline font-bold text-white mb-4 group-hover:text-primary-neon transition-colors">{item.title}</h3>
+              <h2 className="text-2xl md:text-3xl font-headline font-bold text-white mb-4 group-hover:text-primary-neon transition-colors flex items-center gap-2">
+                {item.title}
+              </h2>
               <p className="text-sm text-white/40 line-clamp-2 leading-relaxed font-light">
                 {item.description}
               </p>

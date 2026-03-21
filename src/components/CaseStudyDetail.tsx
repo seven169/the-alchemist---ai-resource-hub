@@ -43,10 +43,10 @@ export const CaseStudyDetail: React.FC<CaseStudyDetailProps> = ({ caseStudy, onB
                 {caseStudy.status}
               </span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-headline font-black tracking-tighter text-white leading-none mb-8">
+            <h1 className="text-4xl md:text-7xl font-headline font-black tracking-tighter text-white leading-none mb-8">
               {caseStudy.title}
             </h1>
-            <p className="text-white/60 text-xl font-light leading-relaxed">
+            <p className="text-white/60 text-lg md:text-xl font-light leading-relaxed">
               {caseStudy.description}
             </p>
           </div>
