@@ -12,8 +12,8 @@ export const AdminPrompts: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
-    id: '', title: '', description: '', category: 'Image Gen', tags: '', image: '', rating: 5.0,
-    positive: '', negative: '', model: '', sampler: '', steps: 20, cfg: 7.0, seed: '', size: '1024x1024'
+    id: '', title: '', description: '', category: '视觉', tags: '', image: '', rating: 5.0,
+    picture_prompt: '', video_prompt: '', model: '', sampler: '', steps: 20, cfg: 7.0, seed: '', size: '1024x1024'
   });
 
   const fetchPrompts = async () => {
@@ -37,15 +37,15 @@ export const AdminPrompts: React.FC = () => {
       setFormData({
         id: prompt.id, title: prompt.title, description: prompt.description || '', category: prompt.category,
         tags: prompt.tags.join(', '), image: prompt.image || '', rating: prompt.rating || 5.0,
-        positive: prompt.positive || '', negative: prompt.negative || '',
+        picture_prompt: prompt.picture_prompt || '', video_prompt: prompt.video_prompt || '',
         model: prompt.params.model || '', sampler: prompt.params.sampler || '', steps: prompt.params.steps || 20,
         cfg: prompt.params.cfg || 7.0, seed: prompt.params.seed || '', size: prompt.params.size || '1024x1024'
       });
     } else {
       setEditingId(null);
       setFormData({
-        id: `prompt-${Date.now()}`, title: '', description: '', category: 'Image Gen', tags: '', image: '', rating: 5.0,
-        positive: '', negative: '', model: '', sampler: '', steps: 20, cfg: 7.0, seed: '', size: '1024x1024'
+        id: `prompt-${Date.now()}`, title: '', description: '', category: '视觉', tags: '', image: '', rating: 5.0,
+        picture_prompt: '', video_prompt: '', model: '', sampler: '', steps: 20, cfg: 7.0, seed: '', size: '1024x1024'
       });
     }
     setIsModalOpen(true);
@@ -58,7 +58,7 @@ export const AdminPrompts: React.FC = () => {
     const payload = {
       id: formData.id, title: formData.title, description: formData.description, category: formData.category,
       tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean), image: formData.image, rating: formData.rating,
-      positive: formData.positive, negative: formData.negative, model: formData.model, sampler: formData.sampler,
+      picture_prompt: formData.picture_prompt, video_prompt: formData.video_prompt, model: formData.model, sampler: formData.sampler,
       steps: formData.steps, cfg: formData.cfg, seed: formData.seed, size: formData.size
     };
 
@@ -116,7 +116,7 @@ export const AdminPrompts: React.FC = () => {
           <thead className="bg-white/5 text-white/40 uppercase font-headline tracking-widest text-xs">
             <tr>
               <th className="px-4 py-3 min-w-[200px]">标题</th>
-              <th className="px-4 py-3 min-w-[150px]">正向提示词摘要</th>
+              <th className="px-4 py-3 min-w-[150px]">图片提示词摘要</th>
               <th className="px-4 py-3 min-w-[100px]">模型</th>
               <th className="px-4 py-3 min-w-[100px] text-right">操作</th>
             </tr>
@@ -128,7 +128,7 @@ export const AdminPrompts: React.FC = () => {
                   <p className="font-bold text-white truncate max-w-[150px]">{prompt.title}</p>
                   <p className="text-xs text-white/30 truncate max-w-[150px]">{prompt.category}</p>
                 </td>
-                <td className="px-4 py-3"><p className="text-xs truncate max-w-[200px] text-white/50">{prompt.positive}</p></td>
+                <td className="px-4 py-3"><p className="text-xs truncate max-w-[200px] text-white/50">{prompt.picture_prompt}</p></td>
                 <td className="px-4 py-3"><span className="px-2 py-1 bg-white/5 rounded text-xs">{prompt.params.model}</span></td>
                 <td className="px-4 py-3 text-right">
                   <div className="flex items-center justify-end gap-1">
@@ -168,13 +168,13 @@ export const AdminPrompts: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-white/40 mb-1">正向提示词 (Positive)*</label>
-                <textarea required value={formData.positive} onChange={e => setFormData({...formData, positive: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-white focus:border-primary-neon h-20 focus:outline-none" />
+                <label className="block text-xs font-bold text-white/40 mb-1">图片提示词 (Picture prompt)*</label>
+                <textarea required value={formData.picture_prompt} onChange={e => setFormData({...formData, picture_prompt: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-white focus:border-primary-neon h-20 focus:outline-none" />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-white/40 mb-1">反向提示词 (Negative)</label>
-                <textarea value={formData.negative} onChange={e => setFormData({...formData, negative: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-white focus:border-primary-neon h-16 focus:outline-none" />
+                <label className="block text-xs font-bold text-white/40 mb-1">视频提示词 (Video prompt)</label>
+                <textarea value={formData.video_prompt} onChange={e => setFormData({...formData, video_prompt: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-white focus:border-primary-neon h-16 focus:outline-none" />
               </div>
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -197,9 +197,18 @@ export const AdminPrompts: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-white/40 mb-1">分类</label>
-                  <input type="text" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-primary-neon" />
+                <div className="relative">
+                  <select 
+                    value={formData.category} 
+                    onChange={e => setFormData({...formData, category: e.target.value})} 
+                    className="w-full bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-primary-neon appearance-none"
+                  >
+                    <option>视觉</option>
+                    <option>字体</option>
+                    <option>UI</option>
+                    <option>图标</option>
+                    <option>动效</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-white/40 mb-1">标签 (逗号分隔)</label>

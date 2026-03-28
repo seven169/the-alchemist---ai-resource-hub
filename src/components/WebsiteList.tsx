@@ -19,14 +19,12 @@ import { EmptyState } from './EmptyState';
 export const WebsiteList: React.FC = () => {
   const [websites, setWebsites] = useState<Resource[]>([]);
   const [activeCategory, setActiveCategory] = useState('全部');
-  const [activeScene, setActiveScene] = useState('全部');
   const [displayCount, setDisplayCount] = useState(6);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement>(null);
 
-  const categories = ['全部', 'UI 界面', '插画设计', '3D 渲染', '平面海报', '摄影大片', 'Image Gen', 'LLM', 'Search'];
-  const scenes = ['全部', '活动页', '营销图', '弹窗', '插画'];
+  const categories = ['全部', '灵感', 'UI', '图标', '动效', 'AI'];
 
   useEffect(() => {
     const fetchWebsites = async () => {
@@ -44,10 +42,9 @@ export const WebsiteList: React.FC = () => {
 
   const filteredWebsites = websites.filter(site => {
     const categoryMatch = activeCategory === '全部' || site.category === activeCategory;
-    const sceneMatch = activeScene === '全部' || (site.tags && site.tags.includes(activeScene));
     const searchMatch = site.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                         (site.description && site.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    return categoryMatch && sceneMatch && searchMatch;
+    return categoryMatch && searchMatch;
   });
 
   const visibleWebsites = filteredWebsites.slice(0, displayCount);
@@ -128,29 +125,6 @@ export const WebsiteList: React.FC = () => {
               ))}
             </div>
           </div>
-          <div className="flex items-center gap-4 overflow-x-auto no-scrollbar">
-            <span className="text-[10px] font-headline uppercase tracking-[0.2em] text-primary-neon w-20 shrink-0">场景 Scene:</span>
-            <div className="flex flex-nowrap gap-2 p-1 bg-white/5 rounded-full w-fit">
-              {scenes.map(s => (
-                <button 
-                  key={s} 
-                  onClick={() => setActiveScene(s)}
-                  className={`relative px-4 py-1.5 rounded-full text-[11px] font-bold transition-colors z-10 ${
-                    activeScene === s ? 'text-bg-dark' : 'text-white/40 hover:text-white'
-                  }`}
-                >
-                  {s}
-                  {activeScene === s && (
-                    <motion.div 
-                      layoutId="activeScene"
-                      className="absolute inset-0 bg-primary-neon rounded-full -z-10"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
 
@@ -159,7 +133,7 @@ export const WebsiteList: React.FC = () => {
         <EmptyState
           title="炼金坩埚空了"
           description="当前分类或搜索词下没有匹配的网站资源，换个方向继续探索吧。"
-          onReset={() => { setActiveCategory('全部'); setActiveScene('全部'); setSearchQuery(''); }}
+          onReset={() => { setActiveCategory('全部'); setSearchQuery(''); }}
         />
       )}
 

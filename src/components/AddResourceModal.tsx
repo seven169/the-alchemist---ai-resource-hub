@@ -25,13 +25,13 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onCl
   const [formData, setFormData] = useState<any>({
     title: '',
     description: '',
-    category: 'UI 界面',
+    category: '灵感',
     tags: '',
     image: '',
     url: '',
     // Prompt specific
-    positive: '',
-    negative: '',
+    picture_prompt: '',
+    video_prompt: '',
     model: '',
     sampler: '',
     steps: 20,
@@ -47,12 +47,12 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onCl
     setFormData({
       title: '',
       description: '',
-      category: activeType === 'website' ? 'UI 界面' : (activeType === 'prompt' ? 'Image Gen' : 'AIGC'),
+      category: activeType === 'website' ? '灵感' : (activeType === 'prompt' ? '视觉' : 'AIGC'),
       tags: '',
       image: '',
       url: '',
-      positive: '',
-      negative: '',
+      picture_prompt: '',
+      video_prompt: '',
       model: '',
       sampler: '',
       steps: 20,
@@ -84,8 +84,8 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onCl
     } else if (type === 'prompt') {
       payload = {
         ...payload,
-        positive: formData.positive,
-        negative: formData.negative,
+        picture_prompt: formData.picture_prompt,
+        video_prompt: formData.video_prompt,
         model: formData.model,
         sampler: formData.sampler,
         steps: formData.steps,
@@ -199,24 +199,29 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onCl
                           onChange={e => setFormData({...formData, category: e.target.value})}
                           className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white appearance-none focus:ring-1 focus:ring-primary-neon/30 outline-none"
                         >
-                          <option>UI 界面</option>
-                          <option>插画设计</option>
-                          <option>3D 渲染</option>
-                          <option>平面海报</option>
-                          <option>摄影大片</option>
-                          <option>Image Gen</option>
-                          <option>LLM</option>
-                          <option>Search</option>
+                          <option>灵感</option>
+                          <option>UI</option>
+                          <option>图标</option>
+                          <option>动效</option>
+                          <option>AI</option>
                         </select>
                         <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 pointer-events-none" />
                       </div>
                     ) : (
-                      <input 
-                        type="text" 
-                        value={formData.category}
-                        onChange={e => setFormData({...formData, category: e.target.value})}
-                        className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white focus:ring-1 focus:ring-primary-neon/30 transition-all outline-none"
-                      />
+                      <div className="relative">
+                        <select 
+                          value={formData.category}
+                          onChange={e => setFormData({...formData, category: e.target.value})}
+                          className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white appearance-none focus:ring-1 focus:ring-primary-neon/30 outline-none"
+                        >
+                          <option>视觉</option>
+                          <option>字体</option>
+                          <option>UI</option>
+                          <option>图标</option>
+                          <option>动效</option>
+                        </select>
+                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 pointer-events-none" />
+                      </div>
                     )}
                   </div>
                 </div>
@@ -252,16 +257,16 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onCl
                       <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">图片提示词 Picture prompt *</label>
                       <textarea 
                         required
-                        value={formData.positive}
-                        onChange={e => setFormData({...formData, positive: e.target.value})}
+                        value={formData.picture_prompt}
+                        onChange={e => setFormData({...formData, picture_prompt: e.target.value})}
                         className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white focus:ring-1 focus:ring-primary-neon/30 transition-all h-24 outline-none resize-none"
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">视频提示词 Video prompt</label>
                       <textarea 
-                        value={formData.negative}
-                        onChange={e => setFormData({...formData, negative: e.target.value})}
+                        value={formData.video_prompt}
+                        onChange={e => setFormData({...formData, video_prompt: e.target.value})}
                         className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white focus:ring-1 focus:ring-primary-neon/30 transition-all h-16 outline-none resize-none"
                       />
                     </div>

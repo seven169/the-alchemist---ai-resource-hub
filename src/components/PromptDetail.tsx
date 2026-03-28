@@ -5,9 +5,8 @@ import {
   Heart, 
   Share2, 
   Download,
-  Terminal,
-  Info,
-  ExternalLink,
+  Image,
+  Video,
   Play
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -82,13 +81,13 @@ export const PromptDetail: React.FC<PromptDetailProps> = ({ prompt, onBack }) =>
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-headline font-bold text-white uppercase tracking-widest flex items-center gap-2">
-                <Play className="w-4 h-4 text-primary-neon" />
+                <Image className="w-4 h-4 text-primary-neon" />
                 图片提示词 Picture prompt
               </h3>
               <div className="flex gap-2">
                 <button 
                   onClick={() => {
-                    navigator.clipboard.writeText(prompt.positive);
+                    navigator.clipboard.writeText(prompt.picture_prompt);
                     toast.success('正向提示词已复制');
                   }}
                   className="p-2 rounded-lg bg-card-high text-white/40 hover:text-primary-neon transition-colors"
@@ -98,18 +97,18 @@ export const PromptDetail: React.FC<PromptDetailProps> = ({ prompt, onBack }) =>
               </div>
             </div>
             <div className="p-6 rounded-2xl bg-card-dark border border-white/5 font-mono text-sm text-white/60 leading-relaxed">
-              {prompt.positive}
+              {prompt.picture_prompt}
             </div>
 
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-headline font-bold text-white uppercase tracking-widest flex items-center gap-2">
-                <Info className="w-4 h-4 text-red-400" />
+                <Video className="w-4 h-4 text-blue-400" />
                 视频提示词 Video prompt
               </h3>
               <div className="flex gap-2">
                 <button 
                   onClick={() => {
-                    navigator.clipboard.writeText(prompt.negative);
+                    navigator.clipboard.writeText(prompt.video_prompt);
                     toast.success('反向提示词已复制');
                   }}
                   className="p-2 rounded-lg bg-card-high text-white/40 hover:text-red-400 transition-colors"
@@ -118,8 +117,8 @@ export const PromptDetail: React.FC<PromptDetailProps> = ({ prompt, onBack }) =>
                 </button>
               </div>
             </div>
-            <div className="p-6 rounded-2xl bg-card-dark border border-white/5 font-mono text-sm text-white/30 leading-relaxed">
-              {prompt.negative}
+            <div className="p-6 rounded-2xl bg-card-dark border border-white/5 font-mono text-sm text-white/60 leading-relaxed">
+              {prompt.video_prompt}
             </div>
           </div>
 

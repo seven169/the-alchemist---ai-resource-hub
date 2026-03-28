@@ -13,7 +13,7 @@ export const AdminWebsites: React.FC = () => {
   
   // Form State
   const [formData, setFormData] = useState({
-    id: '', title: '', description: '', category: 'UI 界面', tags: '', image: '', url: ''
+    id: '', title: '', description: '', category: '灵感', tags: '', image: '', url: ''
   });
 
   const fetchWebsites = async () => {
@@ -44,7 +44,7 @@ export const AdminWebsites: React.FC = () => {
       setEditingId(null);
       setFormData({
         id: `site-${Date.now()}`,
-        title: '', description: '', category: 'UI 界面', tags: '', image: '', url: ''
+        title: '', description: '', category: '灵感', tags: '', image: '', url: ''
       });
     }
     setIsModalOpen(true);
@@ -185,14 +185,11 @@ export const AdminWebsites: React.FC = () => {
                 <div>
                   <label className="block text-xs font-bold text-white/40 mb-1">分类</label>
                   <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-white focus:border-primary-neon focus:outline-none appearance-none">
-                    <option>UI 界面</option>
-                    <option>插画设计</option>
-                    <option>3D 渲染</option>
-                    <option>平面海报</option>
-                    <option>摄影大片</option>
-                    <option>Image Gen</option>
-                    <option>LLM</option>
-                    <option>Search</option>
+                    <option>灵感</option>
+                    <option>UI</option>
+                    <option>图标</option>
+                    <option>动效</option>
+                    <option>AI</option>
                   </select>
                 </div>
                 <div>

@@ -20,8 +20,8 @@ export interface Resource {
 }
 
 export interface Prompt extends Resource {
-  positive: string;
-  negative: string;
+  picture_prompt: string;
+  video_prompt: string;
   params: {
     model: string;
     sampler: string;

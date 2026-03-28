@@ -23,14 +23,12 @@ interface PromptListProps {
 export const PromptList: React.FC<PromptListProps> = ({ onSelectPrompt }) => {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [activeCategory, setActiveCategory] = useState('全部');
-  const [activeStyle, setActiveStyle] = useState('全部');
   const [displayCount, setDisplayCount] = useState(8);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement>(null);
 
-  const categories = ['全部', '插画设计', 'UI 界面', '摄影大片', '3D 渲染', '平面海报', 'Image Gen', 'LLM', 'Search'];
-  const styles = ['全部', '科技感', '极简主义', '赛博朋克', '写实', '超 surreal', '复古'];
+  const categories = ['全部', '视觉', '字体', 'UI', '图标', '动效'];
 
   useEffect(() => {
     const fetchPrompts = async () => {
@@ -59,10 +57,9 @@ export const PromptList: React.FC<PromptListProps> = ({ onSelectPrompt }) => {
 
   const filteredPrompts = prompts.filter(prompt => {
     const categoryMatch = activeCategory === '全部' || prompt.category === activeCategory;
-    const styleMatch = activeStyle === '全部' || (prompt.tags && prompt.tags.includes(activeStyle));
     const searchMatch = prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                         (prompt.description && prompt.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    return categoryMatch && styleMatch && searchMatch;
+    return categoryMatch && searchMatch;
   });
 
   const visiblePrompts = filteredPrompts.slice(0, displayCount);
@@ -140,29 +137,6 @@ export const PromptList: React.FC<PromptListProps> = ({ onSelectPrompt }) => {
             ))}
           </div>
         </div>
-        <div className="flex items-center gap-4 overflow-x-auto no-scrollbar flex-nowrap">
-          <span className="text-[10px] font-headline uppercase tracking-[0.2em] text-primary-neon w-20 shrink-0">风格 Style:</span>
-          <div className="flex flex-nowrap gap-2 p-1 bg-white/5 rounded-full w-fit">
-            {styles.map(style => (
-              <button 
-                key={style} 
-                onClick={() => setActiveStyle(style)}
-                className={`relative px-4 py-1.5 rounded-full text-xs font-bold transition-colors z-10 whitespace-nowrap ${
-                  activeStyle === style ? 'text-bg-dark' : 'text-white/40 hover:text-white'
-                }`}
-              >
-                {style}
-                {activeStyle === style && (
-                  <motion.div 
-                    layoutId="activePromptStyle"
-                    className="absolute inset-0 bg-primary-neon rounded-full -z-10"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
 
       {/* Empty State */}
@@ -170,7 +144,7 @@ export const PromptList: React.FC<PromptListProps> = ({ onSelectPrompt }) => {
         <EmptyState
           title="未找到炼金配方"
           description="该分类或风格下暂无 Prompt，尝试重置筛选器或换个方向探索吧。"
-          onReset={() => { setActiveCategory('全部'); setActiveStyle('全部'); setSearchQuery(''); }}
+          onReset={() => { setActiveCategory('全部'); setSearchQuery(''); }}
         />
       )}
 
@@ -214,7 +188,7 @@ export const PromptList: React.FC<PromptListProps> = ({ onSelectPrompt }) => {
                 <div className="flex gap-3">
                   <button 
                     onClick={() => {
-                      navigator.clipboard.writeText(prompt.positive);
+                      navigator.clipboard.writeText(prompt.picture_prompt);
                       toast.success('提示词已复制');
                     }}
                     className="p-2 rounded-lg hover:bg-card-high transition-colors group/btn text-white/40 hover:text-primary-neon"
