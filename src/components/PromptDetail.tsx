@@ -82,8 +82,8 @@ export const PromptDetail: React.FC<PromptDetailProps> = ({ prompt, onBack }) =>
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-headline font-bold text-white uppercase tracking-widest flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-primary-neon" />
-                正向提示词 POSITIVE PROMPT
+                <Play className="w-4 h-4 text-primary-neon" />
+                图片提示词 Picture prompt
               </h3>
               <div className="flex gap-2">
                 <button 
@@ -104,7 +104,7 @@ export const PromptDetail: React.FC<PromptDetailProps> = ({ prompt, onBack }) =>
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-headline font-bold text-white uppercase tracking-widest flex items-center gap-2">
                 <Info className="w-4 h-4 text-red-400" />
-                反向提示词 NEGATIVE PROMPT
+                视频提示词 Video prompt
               </h3>
               <div className="flex gap-2">
                 <button 
@@ -123,14 +123,6 @@ export const PromptDetail: React.FC<PromptDetailProps> = ({ prompt, onBack }) =>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-8 border-t border-white/5">
-            {Object.entries(prompt.params).map(([key, value]) => (
-              <div key={key} className="p-4 rounded-xl bg-card-dark border border-white/5">
-                <span className="text-[10px] font-headline text-white/20 uppercase tracking-widest block mb-1">{key}</span>
-                <span className="text-sm text-white font-medium">{value}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 

@@ -93,17 +93,6 @@ export const CaseStudyDetail: React.FC<CaseStudyDetailProps> = ({ caseStudy, onB
                     <span className="text-[10px] font-mono text-white/20">{log.time}</span>
                   </div>
                   <p className="text-white/40 font-light leading-relaxed">{log.description}</p>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    {log.images.map((img, i) => (
-                      <div key={i} className="group relative aspect-video rounded-2xl overflow-hidden bg-card-dark border border-white/5">
-                        <img src={img} alt="" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
-                        <button className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <Maximize2 className="w-6 h-6 text-white" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </div>
             ))}

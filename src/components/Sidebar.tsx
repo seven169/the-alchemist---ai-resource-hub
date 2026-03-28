@@ -103,7 +103,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, onO
             <div className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 bg-primary-neon rounded-full border-2 border-sidebar-dark"></div>
           </div>
           <div className="flex flex-col min-w-0 flex-1">
-            <span className="text-sm font-headline font-bold text-white truncate">Ether Lab</span>
+            <span className="text-sm font-headline font-bold text-white truncate">Design major</span>
             <span className="text-[10px] text-white/40 font-medium truncate tracking-wide">Premium Member</span>
           </div>
           <button 

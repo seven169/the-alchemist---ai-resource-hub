@@ -249,7 +249,7 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onCl
                 {type === 'prompt' && (
                   <>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">正向提示词 Positive *</label>
+                      <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">图片提示词 Picture prompt *</label>
                       <textarea 
                         required
                         value={formData.positive}
@@ -258,30 +258,12 @@ export const AddResourceModal: React.FC<AddResourceModalProps> = ({ isOpen, onCl
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">反向提示词 Negative</label>
+                      <label className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-widest ml-1">视频提示词 Video prompt</label>
                       <textarea 
                         value={formData.negative}
                         onChange={e => setFormData({...formData, negative: e.target.value})}
                         className="w-full bg-bg-dark border border-white/5 rounded-xl py-4 px-6 text-white focus:ring-1 focus:ring-primary-neon/30 transition-all h-16 outline-none resize-none"
                       />
-                    </div>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-white/20">模型 Model</label>
-                        <input type="text" value={formData.model} onChange={e => setFormData({...formData, model: e.target.value})} className="w-full bg-bg-dark border border-white/5 rounded-lg p-3 text-white focus:ring-1 focus:ring-primary-neon/30 text-xs" />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-white/20">采样 Sampler</label>
-                        <input type="text" value={formData.sampler} onChange={e => setFormData({...formData, sampler: e.target.value})} className="w-full bg-bg-dark border border-white/5 rounded-lg p-3 text-white focus:ring-1 focus:ring-primary-neon/30 text-xs" />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-white/20">步数 Steps</label>
-                        <input type="number" value={formData.steps} onChange={e => setFormData({...formData, steps: Number(e.target.value)})} className="w-full bg-bg-dark border border-white/5 rounded-lg p-3 text-white focus:ring-1 focus:ring-primary-neon/30 text-xs" />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-white/20">CFG</label>
-                        <input type="number" step="0.1" value={formData.cfg} onChange={e => setFormData({...formData, cfg: Number(e.target.value)})} className="w-full bg-bg-dark border border-white/5 rounded-lg p-3 text-white focus:ring-1 focus:ring-primary-neon/30 text-xs" />
-                      </div>
                     </div>
                   </>
                 )}
