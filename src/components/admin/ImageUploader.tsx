@@ -12,27 +12,67 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ value, onChange })
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const compressImage = (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 1200;
+
+          if (width > height && width > maxDim) {
+            height = (height * maxDim) / width;
+            width = maxDim;
+          } else if (height > maxDim) {
+            width = (width * maxDim) / height;
+            height = maxDim;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob(
+            (blob) => {
+              if (blob) resolve(blob);
+              else reject(new Error('Canvas toBlob failed'));
+            },
+            'image/jpeg',
+            0.8
+          );
+        };
+        img.onerror = () => reject(new Error('Image load failed'));
+      };
+      reader.onerror = () => reject(new Error('FileReader failed'));
+    });
+  };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('图片过大，请上传5MB以内的图片哦！');
-      return;
-    }
-
     setIsUploading(true);
     try {
+      // Compress image
+      const compressedBlob = await compressImage(file);
+      
       // Create a unique file name
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 10)}.${fileExt}`;
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 10)}.jpg`;
       const filePath = `uploads/${fileName}`;
 
       // Upload the file to 'images' bucket
       const { error: uploadError } = await supabase.storage
         .from('images')
-        .upload(filePath, file);
+        .upload(filePath, compressedBlob, {
+          contentType: 'image/jpeg',
+          upsert: true
+        });
 
       if (uploadError) {
         throw uploadError;
@@ -44,7 +84,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ value, onChange })
         .getPublicUrl(filePath);
 
       onChange(publicUrl);
-      toast.success('上传成功');
+      toast.success('上传并压缩成功');
     } catch (error: any) {
       toast.error('上传失败: ' + error.message);
     } finally {
