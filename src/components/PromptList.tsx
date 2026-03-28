@@ -91,50 +91,52 @@ export const PromptList: React.FC<PromptListProps> = ({ onSelectPrompt }) => {
 
   return (
     <div className="py-12 space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <h2 className="text-2xl md:text-3xl font-headline font-bold text-white">提示词 库</h2>
-        <div className="flex items-center gap-3">
-          <div className="relative w-full md:w-64">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-            <input 
-              type="text" 
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setDisplayCount(8);
-              }}
-              placeholder="搜索资源..."
-              className="w-full bg-card-dark border border-transparent rounded-full py-3 pl-12 pr-4 text-sm text-white focus:ring-1 focus:ring-primary-neon focus:border-primary-neon outline-none transition-all"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-4 overflow-x-auto no-scrollbar flex-nowrap">
-          <span className="text-[10px] font-headline uppercase tracking-[0.2em] text-primary-neon w-20 shrink-0">分类 Type:</span>
-          <div className="flex flex-nowrap gap-2 p-1 bg-white/5 rounded-full w-fit">
-            {categories.map(cat => (
-              <button 
-                key={cat} 
-                onClick={() => {
-                  setActiveCategory(cat);
+      <div className="pb-6 space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <h2 className="text-2xl md:text-3xl font-headline font-bold text-white">提示词 库</h2>
+          <div className="flex items-center gap-3">
+            <div className="relative w-full md:w-64">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+              <input 
+                type="text" 
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
                   setDisplayCount(8);
                 }}
-                className={`relative px-4 py-1.5 rounded-full text-xs font-bold transition-colors z-10 whitespace-nowrap ${
-                  activeCategory === cat ? 'text-bg-dark' : 'text-white/40 hover:text-white'
-                }`}
-              >
-                {cat}
-                {activeCategory === cat && (
-                  <motion.div 
-                    layoutId="activePromptCategory"
-                    className="absolute inset-0 bg-primary-neon rounded-full -z-10"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-              </button>
-            ))}
+                placeholder="搜索资源..."
+                className="w-full bg-card-dark border border-transparent rounded-full py-3 pl-12 pr-4 text-sm text-white focus:ring-1 focus:ring-primary-neon focus:border-primary-neon outline-none transition-all"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-4 overflow-x-auto no-scrollbar flex-nowrap">
+            <span className="text-[10px] font-headline uppercase tracking-[0.2em] text-primary-neon w-20 shrink-0">分类 Type:</span>
+            <div className="flex flex-nowrap gap-2 p-1 bg-white/5 rounded-full w-fit">
+              {categories.map(cat => (
+                <button 
+                  key={cat} 
+                  onClick={() => {
+                    setActiveCategory(cat);
+                    setDisplayCount(8);
+                  }}
+                  className={`relative px-4 py-1.5 rounded-full text-xs font-bold transition-colors z-10 whitespace-nowrap ${
+                    activeCategory === cat ? 'text-bg-dark' : 'text-white/40 hover:text-white'
+                  }`}
+                >
+                  {cat}
+                  {activeCategory === cat && (
+                    <motion.div 
+                      layoutId="activePromptCategory"
+                      className="absolute inset-0 bg-primary-neon rounded-full -z-10"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

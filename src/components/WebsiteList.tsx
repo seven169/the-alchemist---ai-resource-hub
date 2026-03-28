@@ -19,7 +19,7 @@ import { EmptyState } from './EmptyState';
 export const WebsiteList: React.FC = () => {
   const [websites, setWebsites] = useState<Resource[]>([]);
   const [activeCategory, setActiveCategory] = useState('全部');
-  const [displayCount, setDisplayCount] = useState(6);
+  const [displayCount, setDisplayCount] = useState(8);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement>(null);
@@ -70,7 +70,7 @@ export const WebsiteList: React.FC = () => {
     setIsLoading(true);
     // Simulate network delay
     setTimeout(() => {
-      setDisplayCount(prev => Math.min(prev + 6, filteredWebsites.length));
+      setDisplayCount(prev => Math.min(prev + 8, filteredWebsites.length));
       setIsLoading(false);
     }, 800);
   };
@@ -89,7 +89,7 @@ export const WebsiteList: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
-                  setDisplayCount(6);
+                  setDisplayCount(8);
                 }}
                 placeholder="搜索资源..."
                 className="w-full bg-card-dark border border-transparent rounded-full py-3 pl-12 pr-4 text-sm text-white focus:ring-1 focus:ring-primary-neon focus:border-primary-neon outline-none transition-all"
@@ -107,9 +107,9 @@ export const WebsiteList: React.FC = () => {
                   key={cat} 
                   onClick={() => {
                     setActiveCategory(cat);
-                    setDisplayCount(6);
+                    setDisplayCount(8);
                   }}
-                  className={`relative px-4 py-1.5 rounded-full text-[11px] font-bold transition-colors z-10 ${
+                  className={`relative px-4 py-1.5 rounded-full text-xs font-bold transition-colors z-10 ${
                     activeCategory === cat ? 'text-bg-dark' : 'text-white/40 hover:text-white'
                   }`}
                 >
